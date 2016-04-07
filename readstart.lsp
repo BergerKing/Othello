@@ -1,4 +1,8 @@
- #|
+ (defun othello-init () 
+ 
+ )
+
+#|
  | Function: getPlayer
  |
  | Description:

@@ -1,3 +1,20 @@
+(defun checkPlayer ( player )
+    ( cond 
+        ;If exactly one clisp argument given
+        ( ( equal player "Black" )
+            
+        )
+		( ( equal player "White" )
+            
+        )
+        
+        ;else
+        ( t
+            ;Required command line argument missing, print usage statement
+            (format t "Please Enter Black or White as player")
+        )
+    )
+)
 (defun startState ()
 (let (start)
 
@@ -27,6 +44,36 @@
 	)
 
 )
+)
+
+
+
+(defun findWinner (state)
+	(let ( (white 0) (black 0) )
+		
+		(dolist (index state)
+			(when (equal index 'B)
+				(incf black)
+			)
+			(when (equal index 'W)
+				(incf white)
+			)
+		)
+		(format t "Black: ~s White: ~s ~%" black white)
+		
+		(cond
+			((> black white)
+				(format t "Black Wins!!!")
+			)
+			((> white black)
+				(format t "White Wins!!!")
+			)
+			((= white black)
+				(format t "Tie Game")
+			)
+		)
+		
+	)
 )
 
 
