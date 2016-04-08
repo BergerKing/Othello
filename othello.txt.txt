@@ -10,7 +10,7 @@ else
 	Mobility Heuristic Value = 0
 	
 
-	if ( Max Player Corners + Min Player Corners != 0)
+if ( Max Player Corners + Min Player Corners != 0)
 	Corner Heuristic Value =
 		100 * (Max Player Corners - Min Player Corners) / (Max Player Corners + Min Player Corners)
 else

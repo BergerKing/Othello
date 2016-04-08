@@ -89,6 +89,14 @@
 		(setf currentPlayer 'B)
 		(setf next 'W)
 	)
+	(when (equal player 'W)
+		(setf currentPlayer 'W)
+		(setf next 'B)	
+	)
+	(when (equal player 'B)
+		(setf currentPlayer 'B)
+		(setf next 'W)
+	)
 	
 	(setf currentSpace -1)
 	(dolist (index position)
@@ -187,7 +195,7 @@
 				
 			
 			)
-			
+			(format t "broke up and left ~s ~s ~%" foundSpace row)
 			(when (and (>= (- currentSpace 9) 0) (equal (nth (- currentSpace 9) position) '-) ) ; up and left
 				(setf viableFlag 0)
 				(do ((foundSpace currentSpace (+ foundSpace 9) ) (row (floor currentSpace 8) (incf row) ) (col (mod currentSpace 8) (incf col) ) ) 
@@ -209,7 +217,7 @@
 				)
 			
 			)
-			
+			(format t "broke up and right ~s ~s ~%" foundSpace row)
 			(when (and (>= (- currentSpace 7) 0) (equal (nth (- currentSpace 7) position) '-) ) ; up and right
 				(setf viableFlag 0)
 				(do ((foundSpace currentSpace (+ foundSpace 7) ) (row (floor currentSpace 8) (incf row) ) (col (mod currentSpace 8) (1- col) ) ) 
@@ -231,7 +239,7 @@
 				)
 			
 			)
-			
+			(format t "broke down and left ~s ~s ~%" foundSpace row)
 			(when (and (>= (+ currentSpace 7) 0) (equal (nth (+ currentSpace 7) position) '-) ) ; down and left
 				(setf viableFlag 0)
 				(do ((foundSpace currentSpace (- foundSpace 7) ) (row (floor currentSpace 8) (1- row) ) (col (mod currentSpace 8) (incf col) ) ) 
@@ -253,7 +261,7 @@
 				)
 				
 			)
-			
+			(format t "broke down and right ~s ~s ~%" foundSpace row)
 			(when (and (>= (+ currentSpace 9) 0) (equal (nth ( + currentSpace 9) position) '-) ) ; down and right
 				(setf viableFlag 0)
 				(do ((foundSpace currentSpace (- foundSpace 9) ) (row (floor currentSpace 8) (1- row) ) (col (mod currentSpace 8) (1- col) ) ) 
@@ -280,6 +288,8 @@
 		)
 	
 	)
+	(return-from move-generator moves)
+	
 )
 )
 
