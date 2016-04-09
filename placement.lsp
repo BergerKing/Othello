@@ -1,6 +1,10 @@
+
+(load 'moves.lsp)
+
 (defun placeStone (coords state player &optional computer)
 	(let (tempPos)
 		(cond
+			;this not computer move is gonna need to change
 			((equal nil computer) (validatePlayerChoice coords state player) )
 			(t (setf (nth coords state) player) (setf tempPos (coords))
 		)
@@ -11,7 +15,7 @@
 (defun coordinateConversion (coords)
 	(8 * (1- (car coords)) + (1- (cadr coords)))
 )
-
+#|
 (defun validatePlayerChoice (coords state player)
 	(let (validSuccessors tempPos)
 		;will call generate successors
@@ -21,4 +25,4 @@
 		;find converted coords in successor list
 		(when (equal  (member validSuccesors tempPos) nil) (format t "Invalid move. Please try again") (humanMove))
 	)
-)
+)|#
