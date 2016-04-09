@@ -1,3 +1,20 @@
+(defun checkPlayer ( player )
+    ( cond 
+        ;If exactly one clisp argument given
+        ( ( equal player "Black" )
+            
+        )
+		( ( equal player "White" )
+            
+        )
+        
+        ;else
+        ( t
+            ;Required command line argument missing, print usage statement
+            (format t "Please Enter Black or White as player")
+        )
+    )
+)
 (defun startState ()
 (let (start)
 
@@ -30,6 +47,36 @@
 )
 
 
+
+(defun findWinner (state)
+	(let ( (white 0) (black 0) )
+		
+		(dolist (index state)
+			(when (equal index 'B)
+				(incf black)
+			)
+			(when (equal index 'W)
+				(incf white)
+			)
+		)
+		(format t "Black: ~s White: ~s ~%" black white)
+		
+		(cond
+			((> black white)
+				(format t "Black Wins!!!")
+			)
+			((> white black)
+				(format t "White Wins!!!")
+			)
+			((= white black)
+				(format t "Tie Game")
+			)
+		)
+		
+	)
+)
+
+
 (defun move-generator (position player)
 (let ( moves currentPlayer next currentSpace foundSpace viableFlag row col)
 	(setf moves ())
@@ -39,6 +86,14 @@
 		(setf next 'B)	
 	)
 	(when (equal player "Black")
+		(setf currentPlayer 'B)
+		(setf next 'W)
+	)
+	(when (equal player 'W)
+		(setf currentPlayer 'W)
+		(setf next 'B)	
+	)
+	(when (equal player 'B)
 		(setf currentPlayer 'B)
 		(setf next 'W)
 	)
@@ -140,7 +195,7 @@
 				
 			
 			)
-			
+			(format t "broke up and left ~s ~s ~%" foundSpace row)
 			(when (and (>= (- currentSpace 9) 0) (equal (nth (- currentSpace 9) position) '-) ) ; up and left
 				(setf viableFlag 0)
 				(do ((foundSpace currentSpace (+ foundSpace 9) ) (row (floor currentSpace 8) (incf row) ) (col (mod currentSpace 8) (incf col) ) ) 
@@ -162,7 +217,7 @@
 				)
 			
 			)
-			
+			(format t "broke up and right ~s ~s ~%" foundSpace row)
 			(when (and (>= (- currentSpace 7) 0) (equal (nth (- currentSpace 7) position) '-) ) ; up and right
 				(setf viableFlag 0)
 				(do ((foundSpace currentSpace (+ foundSpace 7) ) (row (floor currentSpace 8) (incf row) ) (col (mod currentSpace 8) (1- col) ) ) 
@@ -184,7 +239,7 @@
 				)
 			
 			)
-			
+			(format t "broke down and left ~s ~s ~%" foundSpace row)
 			(when (and (>= (+ currentSpace 7) 0) (equal (nth (+ currentSpace 7) position) '-) ) ; down and left
 				(setf viableFlag 0)
 				(do ((foundSpace currentSpace (- foundSpace 7) ) (row (floor currentSpace 8) (1- row) ) (col (mod currentSpace 8) (incf col) ) ) 
@@ -206,7 +261,7 @@
 				)
 				
 			)
-			
+			(format t "broke down and right ~s ~s ~%" foundSpace row)
 			(when (and (>= (+ currentSpace 9) 0) (equal (nth ( + currentSpace 9) position) '-) ) ; down and right
 				(setf viableFlag 0)
 				(do ((foundSpace currentSpace (- foundSpace 9) ) (row (floor currentSpace 8) (1- row) ) (col (mod currentSpace 8) (1- col) ) ) 
@@ -233,6 +288,8 @@
 		)
 	
 	)
+	(return-from move-generator moves)
+	
 )
 )
 
