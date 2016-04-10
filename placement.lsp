@@ -13,7 +13,7 @@
 )
 
 (defun coordinateConversion (coords)
-	(* 8 (1- (car coords)) + (1- (cadr coords)))
+	(+ (* 8 (1- (car coords))) (1- (cadr coords)))
 )
 
 #|
