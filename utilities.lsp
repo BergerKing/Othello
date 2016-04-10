@@ -631,6 +631,9 @@
 			(setf (nth index position) currentPlayer)
 		)
 		
+		(setf (nth move position) currentPlayer) ; add the stone that cause flips
+												; to the game board
+		
 		; and return the new board state
 		(return-from flipTiles position)
 	)

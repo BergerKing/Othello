@@ -1,5 +1,5 @@
-; Node structure: stores state, parent, and depth.
-(defstruct node state parent minMaxVal)
+; Node structure: stores state, parent, moveLocation and depth.
+(defstruct node state parent moveLocation minMaxVal)
 
 (defvar *WCanMove* 0)
 (defvar *BCanMove* 0)
