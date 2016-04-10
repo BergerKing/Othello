@@ -1,3 +1,13 @@
+ #|
+ | Function: othello-init
+ |
+ | Description:
+ | Prepares the othello program for tournament play
+ |
+ | Parameters:
+ | None
+ |
+ |#
  (defun othello-init () 
  
  )
@@ -7,6 +17,7 @@
  |
  | Description:
  | Gets the selected player from the command line
+ | and checks to make sure that the player is valid
  |
  | Parameters:
  | args - command line arguments

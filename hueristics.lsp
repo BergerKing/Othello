@@ -1,27 +1,55 @@
 (load 'utilities.lsp)
+#|
+ | Function: hueristics
+ |
+ | Description:
+ | This function collects the various hueristics values
+ | and adds them together. This then returns the value to the minimax function
+ |
+ |
+ | Parameters:
+ | state - the current othello board state
+ | maxPlayer - The minimax's max player for calculations
+ |
+ |
+ |#
 (defun hueristics (state maxPlayer)
 	(let (coin maxCoins coinWeight mobile corn near final)
+		; get coin hueristic values in a two value list
 		(setf coin (coinParity state maxPlayer) )
-		(format t "past ~s ~%" coin)
+		; get maxs number of coins
 		(setf maxCoins (* (car coin) 10) )
-		(format t "past ~s ~%" maxCoins)
+		; coin weights are returned in the cadr of the list
 		(setf coinWeight (* (cadr coin) 10) )
-		(format t "past ~s ~%" coinWeight)
+		; find mobility - the number of possible moves
 		(setf mobile (* (mobility state maxPlayer) 79) )
-		(format t "past ~s ~%" mobile)
+		; check the corners
 		(setf corn (* (corners state maxPlayer) 802) )
-		(format t "past ~s ~%" corn)
+		; check the spaces near the corners to prevent bad moves
 		(setf near (* (nearCorners state maxPlayer) 382) )
-		(format t "past ~s ~%" near)
 		
+		; add all the weighted values together to get the total hueristic value
 		(setf final (+ (+ (+ (+ maxCoins mobile) corn) near) coinWeight) )
-		(format t "past final ~s ~%" final)
 	)
 )
 
+#|
+ | Function: coinParity
+ |
+ | Description:
+ | This function counts the number of tiles each player has. For each of these tiles 
+ | a weight value is also calculated based on board weights. These two values are then
+ | returned in a list to the hueristic function.
+ |
+ | Parameters:
+ | state - the current othello board state
+ | maxPlayer - the minimax maxPlayer
+ |
+ |#
 (defun coinParity (state maxPlayer)
 	(let ( (maxCoins 0) (minCoins 0) minPlayer boardWeights (diskWeight 0) (counter 0) )
 	
+	     ; the set of board weights
 		(setf boardWeights '(20 -3 11 8 8 11 -3 20 -3 -7 -4 1 1 -4 -7 -3 11 -4 2 2 2 2 -4 11 8 1 2 -3 -3 2 1 8 8 1 2 -3 -3 2 1 8 11 -4 2 2 2 2 -4 11 -3 -7 -4 1 1 -4 -7 -3 20 -3 11 8 8 11 -3 20) )
 		
 		(when (equal maxPlayer 'W)
@@ -30,7 +58,7 @@
 		(when (equal maxPlayer 'B)
 			(setf minPlayer 'W)
 		)
-		(format t "coin1 ~s ~s~%" maxPlayer minPlayer)
+		; step throuhg the list and count the number of coins for each player
 		(dolist (index state)
 			(incf counter)
 			(when (equal index maxPlayer)
@@ -42,20 +70,32 @@
 				(setf diskWeight (- diskWeight (nth counter boardWeights) ) )
 			)
 		)
-		(format t "coin2 ~s ~s~%" maxCoins minCoins)
+		
 		(when (> maxCoins minCoins)
-			; p = (100.0 * my_tiles)/(my_tiles + opp_tiles);
+			
 			(return-from coinParity (list (/ (* maxCoins 100) (+ maxCoins minCoins) ) diskWeight ) )	
 		)
 		(when (< maxCoins minCoins)
 			(return-from coinParity (list (/ (* minCoins -100) (+ maxCoins minCoins) ) diskWeight ) )
 		)
+		; if the two players have the same number of coins
 		(return-from coinParity (list 0 diskWeight) )
 	)
 )
 
 
-
+#|
+ | Function: mobility
+ |
+ | Description:
+ | This function counts the number of possible moves each player has open to them 
+ | on the current board. This value is then returned to the hueristic function.
+ |
+ | Parameters:
+ | state - the current othello board state
+ | maxPlayer - the minimax maxPlayer
+ |
+ |#
 (defun mobility (state maxPlayer)
 	(let (minPlayer maxMoves minMoves)
 		(when (equal maxPlayer 'W)
@@ -64,13 +104,13 @@
 		(when (equal maxPlayer 'B)
 			(setf minPlayer 'W)
 		)
-		
+		; generate a list of possible moves for each player
 		(setf maxMoves (move-generator state maxPlayer) )
 		(setf minMoves (move-generator state minPlayer) )
 		
-		
+		; and decide return statement based on which set of possible moves is longer
 		(when (> (length maxMoves) (length minMoves) )
-			; p = (100.0 * my_tiles)/(my_tiles + opp_tiles);
+
 			(return-from mobility (/ (* (length maxMoves) 100) (+ (length maxMoves) (length minMoves) ) ) )	
 		)
 		(when (< (length maxMoves) (length minMoves) )
@@ -81,6 +121,18 @@
 	)
 )
 
+#|
+ | Function: corners
+ |
+ | Description:
+ | This function counts the number of corners each player has open to them 
+ | on the current board. This value is then returned to the hueristic function.
+ |
+ | Parameters:
+ | state - the current othello board state
+ | maxPlayer - the minimax maxPlayer
+ |
+ |#
 (defun corners (state maxPlayer)
 	(let (minPlayer (maxCorners 0) (minCorners 0) )
 		(when (equal maxPlayer 'W)
@@ -90,6 +142,7 @@
 			(setf minPlayer 'W)
 		)
 		
+		; check to see if a player holds each corner
 		(cond
 			( (equal (nth 0 state) maxPlayer)
 				(incf maxCorners)
@@ -127,11 +180,26 @@
 			(return-from corners 0)
 		)
 		
+		; return the max players weighted corner value
 		(return-from corners (* (- maxCorners minCorners) 25) )	
 		
 	)
 )
 
+#|
+ | Function: nearCorners
+ |
+ | Description:
+ | This function checks to see if the possible move for the max player's
+ | move results in taking one of three spaces around each corner. These
+ | space usually result in corners for the min player and are therefore
+ | negitivly weight in the hueristic calculations.
+ |
+ | Parameters:
+ | state - the current othello board state
+ | maxPlayer - the minimax maxPlayer
+ |
+ |#
 (defun nearCorners (state maxPlayer)
 	(let (minPlayer (maxCorners 0) (minCorners 0) )
 		(when (equal maxPlayer 'W)

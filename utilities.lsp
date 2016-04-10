@@ -1,3 +1,15 @@
+#|
+ | Function: checkPlayer
+ |
+ | Description:
+ | This function checks to make sure the player color was entered in the correct
+ | way.
+ | 
+ |
+ | Parameters:
+ | player - the string the user entered as the player
+ |
+ |#
 (defun checkPlayer ( player )
     ( cond 
         ;If exactly one clisp argument given
@@ -15,6 +27,18 @@
         )
     )
 )
+
+#|
+ | Function: startState
+ |
+ | Description:
+ | This function returns the start state of the othello board
+ | 
+ |
+ | Parameters:
+ | None
+ |
+ |#
 (defun startState ()
 (let (start)
 
@@ -26,13 +50,24 @@
 )
 
 
+#|
+ | Function: printState
+ |
+ | Description:
+ | This function prints out the current othello board state to the terminal 
+ | 
+ |
+ | Parameters:
+ | state - the current othello board state
+ | 
+ |
+ |#
 (defun printState (state)
 (let (row count)
 
 	(setf row 0)
 	(setf count 0)
 	(format t "~%   1 2 3 4 5 6 7 8")
-	;(format t " ~s " row)
 	(dolist (index state)
 		(when (equal (mod count 8) 0)
 			(incf row)
@@ -47,10 +82,22 @@
 )
 
 
-
+#|
+ | Function: findWinner
+ |
+ | Description:
+ | This function goes through the final board and counts
+ | the number of tiles of each color to determine the
+ | winner of the game.
+ |
+ | Parameters:
+ | state - the current othello board state
+ |
+ |#
 (defun findWinner (state)
 	(let ( (white 0) (black 0) )
 		
+		; step through the list and count tiles
 		(dolist (index state)
 			(when (equal index 'B)
 				(incf black)
@@ -76,11 +123,24 @@
 	)
 )
 
-
+#|
+ | Function: move-generator
+ |
+ | Description:
+ | This function goes through the board and determine a
+ | list of possible moves that can be made for the given player
+ | which is then returned
+ |
+ | Parameters:
+ | position - the current othello board state
+ | player - the current player looking for moves
+ |
+ |#
 (defun move-generator (position player)
 (let ( moves currentPlayer next currentSpace foundSpace viableFlag row col)
 	(setf moves ())
 	
+	; retrive the current and next player to move
 	(when (equal player "White")
 		(setf currentPlayer 'W)
 		(setf next 'B)	
@@ -98,37 +158,49 @@
 		(setf next 'W)
 	)
 	
+	;set space being looked at
 	(setf currentSpace -1)
+	
+	; go through the list and look for an occurence of the next players tile
+	; when a tile is found check the tiles surrounding that tile looking for
+	; an occurence of the current players tile. If one if found backtrack through
+	; the board in that direction looking for another player tile. If one is found place
+	; it in the vaild move list. A move is not vaild if a blank tile is found or if 
+	; the backtrace reaches the end of the board state.
 	(dolist (index position)
 		(incf currentSpace)
 	
 		(when (equal index next)
-			(format t "~s index ~s ~s ~%" currentSpace index (nth (- currentSpace 1) position ))
-			(when (and (>= (- currentSpace 1) 0) (equal (nth (- currentSpace 1) position ) '-) ) ; left
-				(setf viableFlag 0)
+			(when (and (>= (- currentSpace 1) 0) (equal (nth (- currentSpace 1) position ) '-) ) ; left side
+				(setf viableFlag 0) ; flag to end do loop
+				; backtrace right by adding one
 				(do ((foundSpace currentSpace (incf foundSpace) ) (row (floor currentSpace 8) (incf row) ) (col (mod currentSpace 8) (incf col) ) )
 						( (or (= viableFlag 1) (= viableFlag -1) ) viableFlag)
 					
+					;check if off board
 					(when (> col 7)
 						(setf viableFlag -1)
-					)					
+					)
+					; check for current player tile 					
 					(when (and (equal viableFlag 0) (equal (nth foundSpace position) currentPlayer) )
 						(setf viableFlag 1)
 					)
+					;check if blank
 					(when (and (equal viableFlag 0) (equal (nth foundSpace position) '-) )
 						(setf viableFlag -1)
 					) 
 				)
-				
+				; if move was found add to viable move lisr
 				(when (equal viableFlag 1)
 					(setf moves (nconc moves (list (- currentSpace 1) ) ) )
 				)
 				
 			
 			)
-			(format t "broke right ~%")
+			; check right space and backtrace left
 			(when (and (>= (+ currentSpace 1) 0) (equal (nth (+ currentSpace 1) position ) '-) ); right
 				(setf viableFlag 0)
+				; backtrace left by subtracting one each time
 				(do ((foundSpace currentSpace (1- foundSpace) ) (row (floor currentSpace 8) (1- row) ) (col (mod currentSpace 8) (1- col) ) )
 						( (or (= viableFlag 1) (= viableFlag -1) ) viableFlag)
 						
@@ -148,9 +220,10 @@
 				)
 			
 			)
-			
+			; check up space and backtrace down
 			(when (and (>= (- currentSpace 8) 0) (equal (nth ( - currentSpace 8) position) '-) ) ; up
 				(setf viableFlag 0)
+				; move down by adding 8
 				(do ((foundSpace currentSpace (+ foundSpace 8) ) (row (floor currentSpace 8) (incf row) ) (col (mod currentSpace 8) (incf col) ) ) 
 						( (or (= viableFlag 1) (= viableFlag -1) ) viableFlag)
 						
@@ -171,16 +244,16 @@
 				
 			
 			)
-			
+			; check down and backtrace up
 			(when (and (>= (+ currentSpace 8) 0) (equal (nth (+ currentSpace 8) position) '-) ) ; down
 				(setf viableFlag 0)
+				; move up by subtracting 8
 				(do ((foundSpace currentSpace (- foundSpace 8) ) (row (floor currentSpace 8) (1- row) ) (col (mod currentSpace 8) (1- col) ) ) 
 						( (or (= viableFlag 1) (= viableFlag -1) ) viableFlag)
 						
 					(when (< row 0)
 						(setf viableFlag -1)
 					)
-					(format t "broke down ~s ~s ~%" foundSpace row)
 					(when (and (equal viableFlag 0) (equal (nth foundSpace position) currentPlayer) )
 						(setf viableFlag 1)
 					)
@@ -195,9 +268,10 @@
 				
 			
 			)
-			(format t "broke up and left ~s ~s ~%" foundSpace row)
+			; check upper left corner but backtrace down and right
 			(when (and (>= (- currentSpace 9) 0) (equal (nth (- currentSpace 9) position) '-) ) ; up and left
 				(setf viableFlag 0)
+				; in the list the down and right spaces are always + 9
 				(do ((foundSpace currentSpace (+ foundSpace 9) ) (row (floor currentSpace 8) (incf row) ) (col (mod currentSpace 8) (incf col) ) ) 
 						( (or (= viableFlag 1) (= viableFlag -1) ) viableFlag)
 						
@@ -217,12 +291,14 @@
 				)
 			
 			)
-			(format t "broke up and right ~s ~s ~%" foundSpace row)
+			; check upper right corner but backtrace down and left
 			(when (and (>= (- currentSpace 7) 0) (equal (nth (- currentSpace 7) position) '-) ) ; up and right
 				(setf viableFlag 0)
+				; backtrace done by adding 7
 				(do ((foundSpace currentSpace (+ foundSpace 7) ) (row (floor currentSpace 8) (incf row) ) (col (mod currentSpace 8) (1- col) ) ) 
 						( (or (= viableFlag 1) (= viableFlag -1) ) viableFlag)
-						
+					
+					; make sure to check the row and column for off board in all diaganol backtraces 					
 					(when (or (> row 7) (< col 0) )
 						(setf viableFlag -1)
 					)
@@ -239,9 +315,10 @@
 				)
 			
 			)
-			(format t "broke down and left ~s ~s ~%" foundSpace row)
+			; check lower left corner but backtrace up and right
 			(when (and (>= (+ currentSpace 7) 0) (equal (nth (+ currentSpace 7) position) '-) ) ; down and left
 				(setf viableFlag 0)
+				; subtracts seven each backtrace
 				(do ((foundSpace currentSpace (- foundSpace 7) ) (row (floor currentSpace 8) (1- row) ) (col (mod currentSpace 8) (incf col) ) ) 
 						( (or (= viableFlag 1) (= viableFlag -1) ) viableFlag)
 						
@@ -261,7 +338,7 @@
 				)
 				
 			)
-			(format t "broke down and right ~s ~s ~%" foundSpace row)
+			; check lower right corner but backtrace up and left
 			(when (and (>= (+ currentSpace 9) 0) (equal (nth ( + currentSpace 9) position) '-) ) ; down and right
 				(setf viableFlag 0)
 				(do ((foundSpace currentSpace (- foundSpace 9) ) (row (floor currentSpace 8) (1- row) ) (col (mod currentSpace 8) (1- col) ) ) 
@@ -288,6 +365,7 @@
 		)
 	
 	)
+	; one all moves have been checked return the list of possible moves
 	(return-from move-generator moves)
 	
 )
@@ -296,12 +374,25 @@
 
 
 
-
+#|
+ | Function: flipTiles
+ |
+ | Description:
+ | This function takes the move made by the current player and
+ | flips all the tiles that the player would capture
+ |
+ | Parameters:
+ | position - the current othello board state
+ | player - the current player looking for moves
+ | move - the spot on the board the player intends to go
+ |
+ |#
 (defun flipTiles (position player move)
 	(let ( flips totalFlips currentPlayer next currentSpace foundSpace viableFlag row col)
 		(setf flips '())
 		(setf totalFlips '())
 		
+		;check player
 		(when (equal player "White")
 			(setf currentPlayer 'W)
 			(setf next 'B)
@@ -312,48 +403,45 @@
 		)
 		
 		(setf currentSpace move)
-		(format t "current ~s " (nth (- currentSpace 2) position ))
+		; look right for flipable tiles
 		(when (and (>= (+ currentSpace 1) 0) (equal (nth (+ currentSpace 1) position ) next) ) ; right
 			(setf viableFlag 0)
 			(setf flips '())
 			(do ((foundSpace (+ currentSpace 1) (incf foundSpace) ) (row (floor (+ currentSpace 1) 8) (incf row) ) (col (mod (+ currentSpace 1) 8) (incf col) ) )
 					( (or (= viableFlag 1) (= viableFlag -1) ) viableFlag)
-				(format t "in loop  ~s~%" (nth foundSpace position ))
-				(format t "when check  ~s ~s~%" (nth foundSpace position) currentPlayer)
+				; check if off board
 				(when (> col 7)
 					(setf viableFlag -1)
 					(setf flips '())
 					(format t "bad1 ~s ~%" flips)
 				)
+				; check for current player tile to end flips
 				(when (and (equal viableFlag 0) (equal (nth foundSpace position) currentPlayer) )
 					(setf viableFlag 1)
-					(format t "complete ~s ~s" flips currentPlayer)
-					(setf totalFlips (append totalFlips flips) ); check append call !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+					; append directional flips to total flips
+					(setf totalFlips (append totalFlips flips) )
 				)
+				; check for blank if found dump flips list
 				(when (and (equal viableFlag 0) (equal (nth foundSpace position) '-) )
 					(setf viableFlag -1)
 					(setf flips '())
-					(format t "bad2 ~s ~%" flips)
 				)
+				; if a flip is good add to flips list
 				(when (and (equal viableFlag 0) (equal (nth foundSpace position) next) )
 				
 					(setf flips (append flips (list foundSpace) ) )
-					(format t "flip ~s ~%" flips)
+					
 				
 				)
 			)
 			
-			#|(when (equal viableFlag 1)
-				(setf moves (nconc moves (list (- currentSpace 1) ) ) )
-			)|#
-			
 		
 		)
 		
+		;check left
 		(when (and (>= (- currentSpace 1) 0) (equal (nth (- currentSpace 1) position ) next) ); left
 			(setf viableFlag 0)
 			(setf flips '())
-			(format t "broke left ~%")
 			(do ((foundSpace (- currentSpace 1) (1- foundSpace) ) (row (floor (- currentSpace 1) 8) (1- row) ) (col (mod (- currentSpace 1) 8) (1- col) ) )
 					( (or (= viableFlag 1) (= viableFlag -1) ) viableFlag)
 					
@@ -363,8 +451,7 @@
 				)
 				(when (and (equal viableFlag 0) (equal (nth foundSpace position) currentPlayer) )
 					(setf viableFlag 1)
-					(format t "complete ~s ~s" flips currentPlayer)
-					(setf totalFlips (append totalFlips flips) ); check append call !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+					(setf totalFlips (append totalFlips flips) )
 				)
 				(when (and (equal viableFlag 0) (equal (nth foundSpace position) '-) )
 					(setf viableFlag -1)
@@ -373,45 +460,39 @@
 				(when (and (equal viableFlag 0) (equal (nth foundSpace position) next) )
 				
 					(setf flips (append flips (list foundSpace) ) )
-					(format t "flip ~s ~%" flips)
 				)
 			)
 		
 		)
-		
+		;check up
 		(when (and (>= (- currentSpace 8) 0) (equal (nth (- currentSpace 8) position) next) ) ; up
 			(setf viableFlag 0)
 			(setf flips ())
-			(format t "~% broke up ~%")
+
 			(do ((foundSpace (- currentSpace 8) (- foundSpace 8) ) (row (floor (- currentSpace 8) 8) (1- row) ) (col (mod (- currentSpace 8) 8) (incf col) ) ) 
 					( (or (= viableFlag 1) (= viableFlag -1) ) viableFlag)
 					
 				(when (< row 0)
 					(setf viableFlag -1)
-					(format t "top reached ~%")
 					(setf flips '())
 				)
 				(when (and (equal viableFlag 0) (equal (nth foundSpace position) currentPlayer) )
 					(setf viableFlag 1)
-					(format t "complete ~s ~s" flips currentPlayer)
-					(setf totalFlips (append totalFlips flips) ); check append call !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+					(setf totalFlips (append totalFlips flips) )
 				)
 				(when (and (equal viableFlag 0) (equal (nth foundSpace position) '-) )
 					(setf viableFlag -1)
-					(format t "wrong up")
 					(setf flips '())
 				)
 				(when (and (equal viableFlag 0) (equal (nth foundSpace position) next) )
 				
 					(setf flips (append flips (list foundSpace) ) )
-					(format t "flip ~s ~%" flips)
-				
-				
+						
 				)
 			)
 
 		)
-		
+		; check down
 		(when (and (>= (+ currentSpace 8) 0) (equal (nth (+ currentSpace 8) position) next) ) ; down
 			(setf viableFlag 0)
 			(setf flips '())
@@ -422,11 +503,9 @@
 					(setf viableFlag -1)
 					(setf flips '())
 				)
-				(format t "broke down ~s ~s ~%" foundSpace row)
 				(when (and (equal viableFlag 0) (equal (nth foundSpace position) currentPlayer) )
 					(setf viableFlag 1)
-					(format t "complete ~s ~s" flips currentPlayer)
-					(setf totalFlips (append totalFlips flips) ); check append call !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+					(setf totalFlips (append totalFlips flips) )
 				)
 				(when (and (equal viableFlag 0) (equal (nth foundSpace position) '-) )
 					(setf viableFlag -1)
@@ -435,13 +514,12 @@
 				(when (and (equal viableFlag 0) (equal (nth foundSpace position) next) )
 				
 					(setf flips (append flips (list foundSpace) ) )
-					(format t "flip ~s ~%" flips)
 				
 				
 				)
 			)
 		)
-		
+		; check upper left
 		(when (and (>= (- currentSpace 9) 0) (equal (nth (- currentSpace 9) position) next) ) ; up and left
 			(setf viableFlag 0)
 			(setf flips '())
@@ -454,8 +532,7 @@
 				)
 				(when (and (equal viableFlag 0) (equal (nth foundSpace position) currentPlayer) )
 					(setf viableFlag 1)
-					(format t "complete ~s ~s" flips currentPlayer)
-					(setf totalFlips (append totalFlips flips) ); check append call !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+					(setf totalFlips (append totalFlips flips) )
 				)
 				(when (and (equal viableFlag 0) (equal (nth foundSpace position) '-) )
 					(setf viableFlag -1)
@@ -464,13 +541,12 @@
 				(when (and (equal viableFlag 0) (equal (nth foundSpace position) next) )
 				
 					(setf flips (append flips (list foundSpace) ) )
-					(format t "flip ~s ~%" flips)
 				
 				)
 			)
 		
 		)
-		
+		; check uppper right
 		(when (and (>= (- currentSpace 7) 0) (equal (nth (- currentSpace 7) position) next) ) ; up and right
 			(setf viableFlag 0)
 			(setf flips '())
@@ -483,8 +559,7 @@
 				)
 				(when (and (equal viableFlag 0) (equal (nth foundSpace position) currentPlayer) )
 					(setf viableFlag 1)
-					(format t "complete ~s ~s" flips currentPlayer)
-					(setf totalFlips (append totalFlips flips) ); check append call !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+					(setf totalFlips (append totalFlips flips) )
 				)
 				(when (and (equal viableFlag 0) (equal (nth foundSpace position) '-) )
 					(setf viableFlag -1)
@@ -493,11 +568,10 @@
 				(when (and (equal viableFlag 0) (equal (nth foundSpace position) next) )
 				
 					(setf flips (append flips (list foundSpace) ) )
-					(format t "flip ~s ~%" flips)
 				)
 			)
 		)
-		
+		; check lower left
 		(when (and (>= (+ currentSpace 7) 0) (equal (nth (+ currentSpace 7) position) next) ) ; down and left
 			(setf viableFlag 0)
 			(setf flips '())
@@ -510,8 +584,7 @@
 				)
 				(when (and (equal viableFlag 0) (equal (nth foundSpace position) currentPlayer) )
 					(setf viableFlag 1)
-					(format t "complete ~s ~s" flips currentPlayer)
-					(setf totalFlips (append totalFlips flips) ); check append call !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+					(setf totalFlips (append totalFlips flips) )
 				)
 				(when (and (equal viableFlag 0) (equal (nth foundSpace position) '-) )
 					(setf viableFlag -1)
@@ -519,14 +592,12 @@
 				)
 				(when (and (equal viableFlag 0) (equal (nth foundSpace position) next) )
 				
-					(setf flips (append flips (list foundSpace) ) )
-					(format t "flip ~s ~%" flips)
-				
-				
+					(setf flips (append flips (list foundSpace) ) )			
+					
 				)
 			)
 		)
-		
+		; check lower right
 		(when (and (>= (+ currentSpace 9) 0) (equal (nth ( + currentSpace 9) position) next) ) ; down and right
 			(setf viableFlag 0)
 			(setf flips '())
@@ -539,8 +610,7 @@
 				)
 				(when (and (equal viableFlag 0) (equal (nth foundSpace position) currentPlayer) )
 					(setf viableFlag 1)
-					(format t "complete ~s ~s" flips currentPlayer)
-					(setf totalFlips (append totalFlips flips) ); check append call !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+					(setf totalFlips (append totalFlips flips) )
 				)
 				(when (and (equal viableFlag 0) (equal (nth foundSpace position) '-) )
 					(setf viableFlag -1)
@@ -549,17 +619,19 @@
 				(when (and (equal viableFlag 0) (equal (nth foundSpace position) next) )
 				
 					(setf flips (append flips (list foundSpace) ) )
-					(format t "flip ~s ~%" flips)
 				)					
 			)
 			
 		)
 		
+		; ones all directions are checked flip the tiles in
+		; total flips to the current players color
 		(dolist (index totalFlips)
 		
 			(setf (nth index position) currentPlayer)
 		)
 		
+		; and return the new board state
 		(return-from flipTiles position)
 	)
 )
