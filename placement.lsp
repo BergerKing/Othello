@@ -6,15 +6,16 @@
 		(cond
 			;this not computer move is gonna need to change
 			((equal nil computer) (validatePlayerChoice coords state player) )
-			(t (setf (nth coords state) player) (setf tempPos (coords))
+			(t (setf (nth coords state) player) (setf tempPos (coords)))
 		)
 		(flipTiles position player tempPos)
 	)
 )
 
 (defun coordinateConversion (coords)
-	(8 * (1- (car coords)) + (1- (cadr coords)))
+	(* 8 (1- (car coords)) + (1- (cadr coords)))
 )
+
 #|
 (defun validatePlayerChoice (coords state player)
 	(let (validSuccessors tempPos)

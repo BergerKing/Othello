@@ -1,4 +1,4 @@
-(load 'minmax.lsp)
+(load 'minimax.lsp)
 ;this needs 
 (defun make-move (position player ply)
 	(let (x)
