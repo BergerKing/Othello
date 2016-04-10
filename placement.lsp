@@ -16,6 +16,14 @@
 	(+ (* 8 (1- (car coords))) (1- (cadr coords)))
 )
 
+(defun reverseConvert(index)
+	(let (coords '())
+		(setf coords (push (1+ (floor index 8)) coords))
+		(setf coords (push (1+ (- index (* 8 (floor index 8)))) coords))
+		(reverse coords)
+	)
+)
+
 #|
 (defun validatePlayerChoice (coords state player)
 	(let (validSuccessors tempPos)
