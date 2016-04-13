@@ -89,5 +89,10 @@ Functions called:
 )
 
 (defun deepenough (depth)
-
+	(let ()
+		(cond
+			((equal depth 0) T)
+			(t nil)
+		)
+	)
 )
