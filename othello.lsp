@@ -1,9 +1,9 @@
 ; Node structure: stores state, parent, moveLocation and depth.
 (defstruct node state parent moveLocation minMaxVal)
 
-(defvar *WCanMove* 0)
-(defvar *BCanMove* 0)
-(defvar *MovesMade* 4)
+(defvar *WCanMove* 0) ; can white make a move
+(defvar *BCanMove* 0) ; can black move flag
+(defvar *MovesMade* 4) ; counter for the amount of tiles on the board 
 
 (defun othello ( &optional ( player nil ) )
 (let (first state vaildMoves)
