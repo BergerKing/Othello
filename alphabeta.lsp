@@ -86,9 +86,10 @@ Functions called:
 						(setq alpha (max succ-value alpha) )
 						(when (<= beta alpha)
 							(format t "max pruned~%")
-							(return-from minimax) ;my question being what do we return from this?
+							(return) ;my question being what do we return from this?
 						)
-						(setq best-path (cons successor succ-value))
+						(setq best-path (cons successor (list succ-value))) ;consing does things - bad things
+						;(break)
 						(setq best-score succ-value)
 						(format t "max best score set: ~s ~%" best-score)
 
@@ -105,9 +106,10 @@ Functions called:
 						(setq beta (min succ-value beta) )
 						(when (<= beta alpha)
 							(format t "min pruned~%")
-							(return-from minimax) ;my question being what do we return from this?
+							(return) ;my question being what do we return from this?
 						)
-						(setq best-path (cons successor succ-value))
+						(setq best-path (cons successor (list succ-value))) ;consing does things - bad things
+						;(break)
 						(setq best-score succ-value)
 						(format t "min best score set: ~s ~%" best-score)	
 				)
