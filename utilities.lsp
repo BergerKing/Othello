@@ -28,27 +28,6 @@
     )
 )
 
-#|
- | Function: startState
- |
- | Description:
- | This function returns the start state of the othello board
- | 
- |
- | Parameters:
- | None
- |
- |#
-(defun startState ()
-(let (start)
-
-	(setf start '( - - - - - - - - - - - - - - - - - - - - - - - - - - - W B - - - - - - B W - - - - - - - - - - - - - - - - - - - - - - - - - - -) )
-	;(setf start '( - - - - - - - - - - - - - B - - - - - B - W - B - - - - W W W - - - - B W - W B - - - - W W W - - - - B - B - B - - - - - - - -) )
-	;(setf start '( - - - - - W - - - - - - - W - - - - - B - W - B - - - - W W W - - - - B W - W B - - - - W W W - - - - B - B - B - - - - - - - -) )
-	
-)
-)
-
 
 #|
  | Function: printState
@@ -398,6 +377,14 @@
 			(setf next 'B)
 		)
 		(when (equal player "Black")
+			(setf currentPlayer 'B)
+			(setf next 'W)
+		)
+		(when (equal player 'W)
+		(setf currentPlayer 'W)
+		(setf next 'B)	
+		)
+		(when (equal player 'B)
 			(setf currentPlayer 'B)
 			(setf next 'W)
 		)

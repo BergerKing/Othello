@@ -50,3 +50,24 @@
         )
     )
 )
+
+#|
+ | Function: startState
+ |
+ | Description:
+ | This function returns the start state of the othello board
+ | 
+ |
+ | Parameters:
+ | None
+ |
+ |#
+(defun startState ()
+	(let (start)
+
+	(setf start (copy-list '( - - - - - - - - - - - - - - - - - - - - - - - - - - - W B - - - - - - B W - - - - - - - - - - - - - - - - - - - - - - - - - - -) ) )
+	;(setf start '( - - - - - - - - - - - - - B - - - - - B - W - B - - - - W W W - - - - B W - W B - - - - W W W - - - - B - B - B - - - - - - - -) )
+	;(setf start '( - - - - - W - - - - - - - W - - - - - B - W - B - - - - W W W - - - - B W - W B - - - - W W W - - - - B - B - B - - - - - - - -) )
+	
+	)
+)

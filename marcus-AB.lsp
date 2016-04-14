@@ -47,6 +47,9 @@ Functions called:
 				
                 ; generate list of sucessor positions
                 (successors '() )
+				
+				;passed in list
+				(start (copy-list position) )
 
                 ; initialize current best path to nil
                 (best-path nil)
@@ -58,10 +61,18 @@ Functions called:
                 succ-value
                 succ-score
             )
+			(when (equal player 'W)
+				(setf next 'B)	
+			)
+			(when (equal player 'B)
+				(setf next 'W)
+			)
 			
 			(dolist (index moves)
 			
 				(setf successors (append successors (list (flipTiles position player index) ) ) )
+				(setf position (copy-list start) )
+				(format t "successors: ~s index ~s ~%" successors index)
 			)
 			
 			(when (equal maxFlag t)
@@ -69,7 +80,7 @@ Functions called:
 					(dolist (successor successors)
 
 						; perform recursive DFS exploration of game tree
-						(setq succ-value (max succ-value (minimax successor (1- depth) alpha beta player nil) ) )
+						(setq succ-value (max succ-value (format t "hi ~s ~%" (minimax successor (1- depth) alpha beta next nil) ) ) )
 						(setq alpha (max succ-value alpha) )
 						(when (<= beta alpha)
 							(format t "max pruned~%")
@@ -87,7 +98,7 @@ Functions called:
 				(dolist (successor successors)
 
 						; perform recursive DFS exploration of game tree
-						(setq succ-value (min succ-value (minimax successor (1- depth) alpha beta player t) ) )
+						(setq succ-value (min succ-value (first (minimax successor (1- depth) alpha beta next t) ) ) )
 						(setq beta (min succ-value beta) )
 						(when (<= beta alpha)
 							(format t "min pruned~%")
@@ -100,17 +111,19 @@ Functions called:
 				
 			)
             ; return (value path) list when done
+			(format t "here3 ~s ~s ~%" best-score best-path)
             (list best-score best-path)
         )
     )
 )
 
 (defun deepenough (depth)
-
-	(when (equal depth 0)
-		t
-	)
-	(when (not (equal depth 0) )
-		nil
+	(let ()
+		(cond
+			( (equal depth 0) 
+				t
+			)
+			(t nil)
+		)
 	)
 )
