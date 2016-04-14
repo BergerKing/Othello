@@ -31,7 +31,7 @@
 		
 		; add all the weighted values together to get the total hueristic value
 		(setf final (+ (+ (+ (+ maxCoins mobile) corn) near) coinWeight) )
-		(format t "here2 ~s ~%" final)
+		;(format t "here2 ~s ~%" final)
 	)
 )
 
