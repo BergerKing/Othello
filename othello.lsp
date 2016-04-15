@@ -80,12 +80,12 @@
 )
 
 ;script for command line run
-( load 'readStart.lsp )
-(cond
-	((= (length *ARGS*) 1)
-		( othello ( getPlayer *ARGS* ) )
-	)
-	(t
-		(othello)
-	)
-)
+;( load 'readStart.lsp )
+;(cond
+;	((= (length *ARGS*) 1)
+;		( othello ( getPlayer *ARGS* ) )
+;	)
+;	(t
+;		(othello)
+;	)
+;)

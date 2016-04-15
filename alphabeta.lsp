@@ -63,12 +63,20 @@ Functions called:
 
                 ; other local variables
                 succ-value
-                succ-score
+                succ-state
             )
 			
 			(dolist (index moves)
-			
-				(setf successors (append successors (list (flipTiles position player index) ) ) )
+				(format t "this is where i die ~%")
+				;(setf successors (append successors (list (flipTiles position player index) ) ) )
+				(setf successors (append successors (list (make-node  :state (flipTiles position player index) 
+                                    :parent start
+									:moveLocation index
+                                    :minMaxVal (hueristics position player)
+										) )
+								)
+				)
+				(format t "the parent ~s ~%" (node-parent (car (last successors) ) ) )
 				(setf position (copy-list start) )
 				(format t "successors: ~s index ~s ~%" successors index)
 			)
@@ -86,10 +94,12 @@ Functions called:
 						)
 						; perform recursive DFS exploration of game tree
 						(format t "alpha in ~s beta in ~s~%" alpha beta)
-						(setf succ-value (first (minimax successor (1- depth) alpha beta next nil) )  ) 
+						(setf succ-value (minimax (node-state successor) (1- depth) alpha beta next nil) )
+						(setf succ-state (second succ-value ) )
+						(setf succ-value (first succ-value ) )
 						(format t "secc alpha ~s ~s~%" succ-value alpha )
 						(when (setf alpha (max succ-value alpha) ) 
-							(format t "alpha changed ~s ~s ~%" alpha successor)
+							(format t "alpha changed ~s ~s ~s ~%" alpha successor succ-state)
 							
 						
 						)
@@ -100,7 +110,8 @@ Functions called:
 						)
 						(format t "alpha ~s  BS: ~s~%" alpha best-score)
 						(when (> alpha best-score)
-							(setf best-path (append best-path (list successor) ) ) ;consing does things - bad things
+							;(setf best-path (append best-path (list (node-state successor) ) ) ) ;consing does things - bad things
+							(setf best-path (node-parent succ-state) )
 							(format t "best path updated: ~s  BP: ~s~%" successor best-path)
 						
 							(setf best-score alpha)
@@ -123,7 +134,10 @@ Functions called:
 						)						
 						; perform recursive DFS exploration of game tree
 						(format t "beta in ~s  alpha in ~s~%" beta alpha)
-						(setf succ-value (first (minimax successor (1- depth) alpha beta next t) ) )
+						;(setf succ-value (first (minimax (node-state successor) (1- depth) alpha beta next t) ) )
+						(setf succ-value (minimax (node-state successor) (1- depth) alpha beta next t) )
+						(setf succ-state (second succ-value ) )
+						(setf succ-value (first succ-value ) )
 						(format t "secc beta ~s ~s~%" succ-value beta)
 						(when (setf beta (min succ-value beta) )
 						
@@ -136,7 +150,8 @@ Functions called:
 						)
 						(format t "beta ~s  BS: ~s~%" beta best-score)
 						(when (< beta best-score)
-							(setf best-path (append best-path (list successor) ) ) ;consing does things - bad things
+							;(setf best-path (append best-path (list (node-state successor) ) ) ) ;consing does things - bad things
+							(setf best-path successor )
 							(format t "best path updated: ~s  BP: ~s~%" successor best-path)
 						
 							(setf best-score beta)
@@ -146,8 +161,8 @@ Functions called:
 				
 			)
             ; return (value path) list when done
-			(format t "here3 ~s best: ~s ~%" best-score (car (last best-path) ) )
-            (list best-score (car (last best-path) ) )
+			(format t "here3 ~s best: ~s ~%" best-score best-path )
+            (list best-score best-path ) 
         )
     )
 )
