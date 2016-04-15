@@ -15,7 +15,6 @@
  |#
 (defun hueristics (state maxPlayer)
 	(let (coin maxCoins coinWeight mobile corn near final)
-		(format t "here ~%")
 		; get coin hueristic values in a two value list
 		(setf coin (coinParity state maxPlayer) )
 		; get maxs number of coins
@@ -31,7 +30,6 @@
 		
 		; add all the weighted values together to get the total hueristic value
 		(setf final (+ (+ (+ (+ maxCoins mobile) corn) near) coinWeight) )
-		;(format t "here2 ~s ~%" final)
 	)
 )
 

@@ -67,7 +67,6 @@ Functions called:
             )
 			
 			(dolist (index moves)
-				(format t "this is where i die ~%")
 				;(setf successors (append successors (list (flipTiles position player index) ) ) )
 				(setf successors (append successors (list (make-node  :state (flipTiles position player index) 
                                     :parent start
@@ -76,13 +75,10 @@ Functions called:
 										) )
 								)
 				)
-				(format t "the parent ~s ~%" (node-parent (car (last successors) ) ) )
 				(setf position (copy-list start) )
-				(format t "successors: ~s index ~s ~%" successors index)
 			)
 			
 			(when (equal maxFlag t)
-					(format t " MAX ~%~%")
 					(setf best-score -100000000)
 					(dolist (successor successors)
 
@@ -93,36 +89,29 @@ Functions called:
 							(setf next 'W)
 						)
 						; perform recursive DFS exploration of game tree
-						(format t "alpha in ~s beta in ~s~%" alpha beta)
 						(setf succ-value (minimax (node-state successor) (1- depth) alpha beta next nil) )
 						(setf succ-state (second succ-value ) )
 						(setf succ-value (first succ-value ) )
-						(format t "secc alpha ~s ~s~%" succ-value alpha )
 						(when (setf alpha (max succ-value alpha) ) 
 							(format t "alpha changed ~s ~s ~s ~%" alpha successor succ-state)
 							
 						
 						)
-						(format t "beta alpha ~s ~s~%" beta alpha)
 						(when (<= beta alpha)
 							(format t "max pruned~%")
 							(return) ;my question being what do we return from this?
 						)
-						(format t "alpha ~s  BS: ~s~%" alpha best-score)
 						(when (> alpha best-score)
 							;(setf best-path (append best-path (list (node-state successor) ) ) ) ;consing does things - bad things
 							(setf best-path (node-parent succ-state) )
-							(format t "best path updated: ~s  BP: ~s~%" successor best-path)
 						
 							(setf best-score alpha)
-							(format t "max best score set: ~s ~%" best-score)
 						)
 
 					)
 			)
 			
 			(when (equal maxFlag nil)
-				(format t " MIN ~%~%")
 				(setf best-score 100000000)
 				(dolist (successor successors)
 
@@ -133,35 +122,28 @@ Functions called:
 							(setf next 'W)
 						)						
 						; perform recursive DFS exploration of game tree
-						(format t "beta in ~s  alpha in ~s~%" beta alpha)
 						;(setf succ-value (first (minimax (node-state successor) (1- depth) alpha beta next t) ) )
 						(setf succ-value (minimax (node-state successor) (1- depth) alpha beta next t) )
 						(setf succ-state (second succ-value ) )
 						(setf succ-value (first succ-value ) )
-						(format t "secc beta ~s ~s~%" succ-value beta)
 						(when (setf beta (min succ-value beta) )
 						
 							(format t "beta changed ~s ~s~%" beta successor)
 						)
-						(format t "alpha beta ~s ~s~%" alpha beta )
 						(when (<= beta alpha)
 							(format t "min pruned~%")
 							(return) ;my question being what do we return from this?
 						)
-						(format t "beta ~s  BS: ~s~%" beta best-score)
 						(when (< beta best-score)
 							;(setf best-path (append best-path (list (node-state successor) ) ) ) ;consing does things - bad things
 							(setf best-path successor )
-							(format t "best path updated: ~s  BP: ~s~%" successor best-path)
 						
 							(setf best-score beta)
-							(format t "min best score set: ~s ~%" best-score)
 						)
 				)
 				
 			)
             ; return (value path) list when done
-			(format t "here3 ~s best: ~s ~%" best-score best-path )
             (list best-score best-path ) 
         )
     )

@@ -16,7 +16,7 @@
 			(format t "Would you like to move first [y/n]? ")
 			
 			(setf first (read-line)) ; get the user input
-			(format t "~s ~%" first)
+			;(format t "~s ~%" first)
 			(when (equal first "y")
 				(format t "OK! You will be playing Black. When asked for your move, please enter the row 
 				and column in which you would like to place a Black stone. Remember, you must 

@@ -400,7 +400,6 @@
 				(when (> col 7)
 					(setf viableFlag -1)
 					(setf flips '())
-					(format t "bad1 ~s ~%" flips)
 				)
 				; check for current player tile to end flips
 				(when (and (equal viableFlag 0) (equal (nth foundSpace position) currentPlayer) )
