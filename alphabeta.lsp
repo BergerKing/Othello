@@ -1,3 +1,6 @@
+(load 'utilities.lsp)
+(load 'readStart.lsp)
+(load 'hueristics.lsp)
 #|
                   ***** MINIMAX.LSP *****
 
@@ -62,12 +65,6 @@ Functions called:
                 succ-value
                 succ-score
             )
-			(when (equal player 'W)
-				(setf next 'B)	
-			)
-			(when (equal player 'B)
-				(setf next 'W)
-			)
 			
 			(dolist (index moves)
 			
@@ -77,47 +74,80 @@ Functions called:
 			)
 			
 			(when (equal maxFlag t)
-					(setq succ-value alpha)
+					(format t " MAX ~%~%")
+					(setf best-score -100000000)
 					(dolist (successor successors)
 
+						(when (equal player 'W)
+							(setf next 'B)	
+						)
+						(when (equal player 'B)
+							(setf next 'W)
+						)
 						; perform recursive DFS exploration of game tree
-						(setq succ-value (max succ-value (first (minimax successor (1- depth) alpha beta next nil) ) ) )
-						;(break)
-						(setq alpha (max succ-value alpha) )
+						(format t "alpha in ~s beta in ~s~%" alpha beta)
+						(setf succ-value (first (minimax successor (1- depth) alpha beta next nil) )  ) 
+						(format t "secc alpha ~s ~s~%" succ-value alpha )
+						(when (setf alpha (max succ-value alpha) ) 
+							(format t "alpha changed ~s ~s ~%" alpha successor)
+							
+						
+						)
+						(format t "beta alpha ~s ~s~%" beta alpha)
 						(when (<= beta alpha)
 							(format t "max pruned~%")
 							(return) ;my question being what do we return from this?
 						)
-						(setq best-path (cons successor (list succ-value))) ;consing does things - bad things
-						;(break)
-						(setq best-score succ-value)
-						(format t "max best score set: ~s ~%" best-score)
+						(format t "alpha ~s  BS: ~s~%" alpha best-score)
+						(when (> alpha best-score)
+							(setf best-path (append best-path (list successor) ) ) ;consing does things - bad things
+							(format t "best path updated: ~s  BP: ~s~%" successor best-path)
+						
+							(setf best-score alpha)
+							(format t "max best score set: ~s ~%" best-score)
+						)
 
 					)
 			)
 			
 			(when (equal maxFlag nil)
-				(setq succ-value beta)
+				(format t " MIN ~%~%")
+				(setf best-score 100000000)
 				(dolist (successor successors)
 
+						(when (equal player 'W)
+							(setf next 'B)	
+						)
+						(when (equal player 'B)
+							(setf next 'W)
+						)						
 						; perform recursive DFS exploration of game tree
-						(setq succ-value (min succ-value (first (minimax successor (1- depth) alpha beta next t) ) ) )
-						;(break)
-						(setq beta (min succ-value beta) )
+						(format t "beta in ~s  alpha in ~s~%" beta alpha)
+						(setf succ-value (first (minimax successor (1- depth) alpha beta next t) ) )
+						(format t "secc beta ~s ~s~%" succ-value beta)
+						(when (setf beta (min succ-value beta) )
+						
+							(format t "beta changed ~s ~s~%" beta successor)
+						)
+						(format t "alpha beta ~s ~s~%" alpha beta )
 						(when (<= beta alpha)
 							(format t "min pruned~%")
 							(return) ;my question being what do we return from this?
 						)
-						(setq best-path (cons successor (list succ-value))) ;consing does things - bad things
-						;(break)
-						(setq best-score succ-value)
-						(format t "min best score set: ~s ~%" best-score)	
+						(format t "beta ~s  BS: ~s~%" beta best-score)
+						(when (< beta best-score)
+							(setf best-path (append best-path (list successor) ) ) ;consing does things - bad things
+							(format t "best path updated: ~s  BP: ~s~%" successor best-path)
+						
+							(setf best-score beta)
+							(format t "min best score set: ~s ~%" best-score)
+						)
 				)
 				
 			)
             ; return (value path) list when done
-			(format t "here3 ~s ~s ~%" best-score best-path)
-            (list best-score best-path)
+			(format t "here3 ~s best: ~s ~%" best-score (car (last best-path) ) )
+            (list best-score (car (last best-path) ) )
         )
     )
 )
