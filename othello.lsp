@@ -1,12 +1,13 @@
+(load 'moves.lsp)
 ; Node structure: stores state, parent, moveLocation and depth.
 (defstruct node state parent moveLocation minMaxVal)
 
-(defvar *WCanMove* 0) ; can white make a move
-(defvar *BCanMove* 0) ; can black move flag
-(defvar *MovesMade* 4) ; counter for the amount of tiles on the board 
+(defparameter *WCanMove* 0) ; can white make a move
+(defparameter *BCanMove* 0) ; can black move flag
+(defparameter *MovesMade* 4) ; counter for the amount of tiles on the board 
 
 (defun othello ( &optional ( player nil ) )
-(let (first state vaildMoves)
+(let (firstplayer state vaildMoves)
 	( load 'utilities.lsp)
 
 	(cond
@@ -15,14 +16,14 @@
 			(setf player 'B)
 			(format t "Would you like to move first [y/n]? ")
 			
-			(setf first (read-line)) ; get the user input
-			;(format t "~s ~%" first)
-			(when (equal first "y")
+			(setf firstplayer (read-line)) ; get the user input
+			;(format t "~s ~%" firstplayer)
+			(when (equal firstplayer "y")
 				(format t "OK! You will be playing Black. When asked for your move, please enter the row 
 				and column in which you would like to place a Black stone. Remember, you must 
 				outflank at least one White stone, or forfeit your move.")
 			)
-			(when (equal first "n")
+			(when (equal firstplayer "n")
 				(format t "OK! You will be playing White. When asked for your move, please enter the row 
 				and column in which you would like to place a White stone. Remember, you must 
 				outflank at least one Black stone, or forfeit your move.")
@@ -34,8 +35,8 @@
 			(checkPlayer player)
 			(format t "Would you like to move first [y/n]? ")
 			
-			(setf first (read-line)) ; get the user input
-			(when (equal first "y")
+			(setf firstplayer (read-line)) ; get the user input
+			(when (equal firstplayer "y")
 				(format t "OK! You will be playing ~s. When asked for your move, please enter the row 
 				and column in which you would like to place a ~s stone. Remember, you must 
 				outflank at least one of the other color stone, or forfeit your move." player player)
@@ -47,7 +48,7 @@
 					(setf player 'B)
 				)
 			)
-			(when (equal first "n")
+			(when (equal firstplayer "n")
 				(format t "OK! You will be playing ~s. When asked for your move, please enter the row 
 				and column in which you would like to place a ~s stone. Remember, you must 
 				outflank at least one of the other color stone, or forfeit your move." player player)
@@ -65,12 +66,15 @@
 	
 	(setf state (startState) ) ; get start state
 	; game loop
-	(do ( (index 0 (incf foundSpace) )
-			( (or (and (= *WCanMove* 1) (= *BCanMove* 1) ) (equal *MovesMade* 63 ) ) *MovesMade*) )
+	(loop while (and (< *MovesMade* 63) (or (equal *WCanMove* 0) (equal *BCanMove* 0) ) )  do
 	
 		(printState state) ; print after each move
+		(format t "You blooody")
 		(setf validMoves (move-generator state player) )
-		(setf state (humanMove vailidMoves player state) )
+		(format t "pain in my rear")
+		(setf state (humanMove validMoves player state) )
+		(format t "or not") ;ignore my retarded comments
+		
 	)
 	(format t "~%GAME OVER ~%")
 	(printState state)
@@ -80,12 +84,12 @@
 )
 
 ;script for command line run
-;( load 'readStart.lsp )
-;(cond
-;	((= (length *ARGS*) 1)
-;		( othello ( getPlayer *ARGS* ) )
-;	)
-;	(t
-;		(othello)
-;	)
-;)
+( load 'readStart.lsp )
+(cond
+	((= (length *ARGS*) 1)
+		( othello ( getPlayer *ARGS* ) )
+	)
+	(t
+		(othello)
+	)
+)

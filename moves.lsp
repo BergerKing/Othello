@@ -1,9 +1,9 @@
-(load 'minimax.lsp)
+(load 'alphabeta.lsp)
 (load 'placement.lsp)
-;this needs 
+;this needs to be fleshed out
 (defun make-move (position player ply)
 	(let (x)
-		(setf x (minimax position ply))
+		(setf x (minimax position ply -10000000000 1000000000 player t))
 		(cadr x)
 	)
 )
@@ -15,6 +15,13 @@
 			(cond 
 				((equal validMoves nil) 
 					(format t "You have no moves currently")
+						(when (equal player 'W)
+							(setf *WCanMove* 1)	
+						)
+						(when (equal player 'B)
+							(setf *BCanMove* 1)
+						)
+						(return-from humanmove state)
 				)
 				(t 
 					(format t "Enter a move: ")
@@ -28,6 +35,8 @@
 		)
 		(setf coords (coordinateConversion coords))
 		(flipTiles state player coords)
+		(incf *MovesMade*)
+		state
 	)
 )
 

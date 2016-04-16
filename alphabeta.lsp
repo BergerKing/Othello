@@ -1,6 +1,7 @@
 (load 'utilities.lsp)
 (load 'readStart.lsp)
 (load 'hueristics.lsp)
+
 #|
                   ***** MINIMAX.LSP *****
 
