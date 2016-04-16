@@ -73,6 +73,7 @@
 		(setf validMoves (move-generator state player) )
 		(format t "pain in my rear")
 		(setf state (humanMove validMoves player state) )
+		(setf player (switchPlayer player))
 		(format t "or not") ;ignore my retarded comments
 		
 	)

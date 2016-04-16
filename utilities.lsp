@@ -625,4 +625,15 @@
 	)
 )
 
+(defun switchplayer (current)
+	(let (newPlayer)
+		(when (equal current 'W)
+			(setf newPlayer 'B)	
+		)
+		(when (equal current 'B)
+			(setf newPlayer 'W)
+		)
+	)
+)
+
 
