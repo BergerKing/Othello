@@ -69,15 +69,12 @@
 	(loop while (and (< *MovesMade* 63) (or (equal *WCanMove* 0) (equal *BCanMove* 0) ) )  do
 	
 		(printState state) ; print after each move
-		(format t "You blooody")
 		(setf validMoves (move-generator state player) )
-		(format t "pain in my rear")
 		(setf state (humanMove validMoves player state) )
 		(setf player (switchPlayer player))
 		(printState state)
 		(setf state (make-move state player 4))
 		(setf player (switchPlayer player))
-		(format t "or not") ;ignore my retarded comments
 		
 	)
 	(format t "~%GAME OVER ~%")

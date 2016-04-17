@@ -65,6 +65,7 @@ Functions called:
                 ; other local variables
                 succ-value
                 succ-state
+				succ-list
             )
 			
 			(dolist (index moves)
@@ -94,18 +95,20 @@ Functions called:
 						(setf succ-state (second succ-value ) )
 						(setf succ-value (first succ-value ) )
 						(when (setf alpha (max succ-value alpha) ) 
-							(format t "alpha changed ~s ~s ~s ~%" alpha successor succ-state)
+							;(format t "alpha changed ~s ~s ~s ~%" alpha successor succ-state)
 							
 						
 						)
 						(when (<= beta alpha)
-							(format t "max pruned~%")
+							;(format t "max pruned~%")
 							(setf best-score alpha)
 							(return) ;my question being what do we return from this?
 						)
 						(when (> alpha best-score)
 							;(setf best-path (append best-path (list (node-state successor) ) ) ) ;consing does things - bad things
-							(setf best-path (node-parent succ-state) )
+							;(format t "broken: ~%")
+							(when (not (null succ-state) ) (setf best-path (node-parent succ-state) ) ) ;this band-aid makes me uncomfortable
+							;(format t "broken? ~%")
 						
 							(setf best-score alpha)
 						)
@@ -130,11 +133,12 @@ Functions called:
 						(setf succ-value (first succ-value ) )
 						(when (setf beta (min succ-value beta) )
 						
-							(format t "beta changed ~s ~s~%" beta successor)
+							;(format t "beta changed ~s ~s~%" beta successor)
 						)
 						(when (<= beta alpha)
-							(format t "min pruned~%")
+							;(format t "min pruned~%")
 							(setf best-score beta)
+							;(setf best-path position)
 							(return) ;my question being what do we return from this?
 						)
 						(when (< beta best-score)
@@ -147,7 +151,8 @@ Functions called:
 				
 			)
             ; return (value path) list when done
-            (list best-score best-path ) 
+			;(format t "RETURNING")
+            (list best-score best-path) 
         )
     )
 )

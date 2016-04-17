@@ -15,6 +15,7 @@
  |#
 (defun hueristics (state maxPlayer)
 	(let (coin maxCoins coinWeight mobile corn near final)
+		(format t "entered hueristics~%")
 		; get coin hueristic values in a two value list
 		(setf coin (coinParity state maxPlayer) )
 		; get maxs number of coins
@@ -47,7 +48,8 @@
  |
  |#
 (defun coinParity (state maxPlayer)
-	(let ( (maxCoins 0) (minCoins 0) minPlayer boardWeights (diskWeight 0) (counter 0) )
+	(let ( (maxCoins 0) (minCoins 0) minPlayer boardWeights (diskWeight 0) (counter -1) )
+		(format t "entered coinparity~%")
 	
 	     ; the set of board weights
 		(setf boardWeights '(20 -3 11 8 8 11 -3 20 -3 -7 -4 1 1 -4 -7 -3 11 -4 2 2 2 2 -4 11 8 1 2 -3 -3 2 1 8 8 1 2 -3 -3 2 1 8 11 -4 2 2 2 2 -4 11 -3 -7 -4 1 1 -4 -7 -3 20 -3 11 8 8 11 -3 20) )
@@ -62,6 +64,7 @@
 		(dolist (index state)
 			(incf counter)
 			(when (equal index maxPlayer)
+				(format t "diskweight ~s counter ~s~%" diskweight counter)
 				(setf diskWeight (+ diskWeight (nth counter boardWeights) ) )
 				(incf maxCoins)
 			)
@@ -72,10 +75,11 @@
 		)
 		
 		(when (> maxCoins minCoins)
-			
+			(format t "returnining from cp mult max~%")
 			(return-from coinParity (list (/ (* maxCoins 100) (+ maxCoins minCoins) ) diskWeight ) )	
 		)
 		(when (< maxCoins minCoins)
+			(format t "returning from cp mult min~%")
 			(return-from coinParity (list (/ (* minCoins -100) (+ maxCoins minCoins) ) diskWeight ) )
 		)
 		; if the two players have the same number of coins
@@ -98,6 +102,7 @@
  |#
 (defun mobility (state maxPlayer)
 	(let (minPlayer maxMoves minMoves)
+		(format t "entered mobility~%")
 		(when (equal maxPlayer 'W)
 			(setf minPlayer 'B)
 		)
@@ -135,6 +140,7 @@
  |#
 (defun corners (state maxPlayer)
 	(let (minPlayer (maxCorners 0) (minCorners 0) )
+		(format t "entered corners~%")
 		(when (equal maxPlayer 'W)
 			(setf minPlayer 'B)
 		)
@@ -202,6 +208,7 @@
  |#
 (defun nearCorners (state maxPlayer)
 	(let (minPlayer (maxCorners 0) (minCorners 0) )
+		(format t "entered nearcorners~%")
 		(when (equal maxPlayer 'W)
 			(setf minPlayer 'B)
 		)

@@ -14,11 +14,13 @@
 #|
 |#
 (defun coordinateConversion (coords)
+	(format t "entered coordinateconversion ~%")
 	(+ (* 8 (1- (car coords))) (1- (cadr coords)))
 )
 
 (defun reverseConvert(index)
 	(let (coords '())
+		(format t "entered reverseconvert~%")
 		(setf coords (push (1+ (floor index 8)) coords))
 		(setf coords (push (1+ (- index (* 8 (floor index 8)))) coords))
 		(reverse coords)
