@@ -74,6 +74,9 @@
 		(format t "pain in my rear")
 		(setf state (humanMove validMoves player state) )
 		(setf player (switchPlayer player))
+		(printState state)
+		(setf state (make-move state player 4))
+		(setf player (switchPlayer player))
 		(format t "or not") ;ignore my retarded comments
 		
 	)

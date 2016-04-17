@@ -100,6 +100,7 @@ Functions called:
 						)
 						(when (<= beta alpha)
 							(format t "max pruned~%")
+							(setf best-score alpha)
 							(return) ;my question being what do we return from this?
 						)
 						(when (> alpha best-score)
@@ -133,12 +134,13 @@ Functions called:
 						)
 						(when (<= beta alpha)
 							(format t "min pruned~%")
+							(setf best-score beta)
 							(return) ;my question being what do we return from this?
 						)
 						(when (< beta best-score)
 							;(setf best-path (append best-path (list (node-state successor) ) ) ) ;consing does things - bad things
 							(setf best-path successor )
-						
+							
 							(setf best-score beta)
 						)
 				)

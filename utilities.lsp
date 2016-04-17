@@ -345,6 +345,7 @@
 	
 	)
 	; one all moves have been checked return the list of possible moves
+	(setf moves (remove-duplicates moves))
 	(return-from move-generator moves)
 	
 )
@@ -633,6 +634,7 @@
 		(when (equal current 'B)
 			(setf newPlayer 'W)
 		)
+		newPlayer
 	)
 )
 
