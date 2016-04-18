@@ -14,13 +14,11 @@
 #|
 |#
 (defun coordinateConversion (coords)
-	(format t "entered coordinateconversion ~%")
 	(+ (* 8 (1- (car coords))) (1- (cadr coords)))
 )
 
 (defun reverseConvert(index)
 	(let (coords '())
-		(format t "entered reverseconvert~%")
 		(setf coords (push (1+ (floor index 8)) coords))
 		(setf coords (push (1+ (- index (* 8 (floor index 8)))) coords))
 		(reverse coords)
@@ -34,6 +32,9 @@
 		(setf tempPos (coordinateConversion coords))
 		;find converted coords in successor list
 		(cond
+			( (< tempPos 0)
+				nil
+			)
 			((equal  (member tempPos validSuccessors) nil) (format t "Invalid move. Please try again ~%"))
 			(t 
 				coords

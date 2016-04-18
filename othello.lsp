@@ -66,15 +66,20 @@
 	
 	(setf state (startState) ) ; get start state
 	; game loop
-	(loop while (and (< *MovesMade* 63) (or (equal *WCanMove* 0) (equal *BCanMove* 0) ) )  do
+	(loop while (and (< *MovesMade* 64) (or (equal *WCanMove* 0) (equal *BCanMove* 0) ) )  do
 	
 		(printState state) ; print after each move
 		(setf validMoves (move-generator state player) )
-		(setf state (humanMove validMoves player state) )
+		(setf state (make-move state player 2))
+		;(setf state (humanMove validMoves player state) )
 		(setf player (switchPlayer player))
 		(printState state)
-		(setf state (make-move state player 4))
-		(setf player (switchPlayer player))
+		(when (< *MovesMade* 64)
+			(setf state (make-move state player 2))
+			(format t "~% second ~s ~%" state)
+			(setf player (switchPlayer player))
+		)
+		
 		
 	)
 	(format t "~%GAME OVER ~%")

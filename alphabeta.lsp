@@ -79,6 +79,12 @@ Functions called:
 				)
 				(setf position (copy-list start) )
 			)
+			(when (equal *MovesMade* 63)
+			
+				(format t "last ~s " (node-state (first successors) ))
+				(return-from minimax (list 0 (node-state (first successors) ) ) )
+			
+			)
 			
 			(when (equal maxFlag t)
 					(setf best-score -100000000)

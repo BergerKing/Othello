@@ -56,6 +56,7 @@
 		(incf count)
 	
 	)
+	(format t "~%")
 
 )
 )
@@ -282,6 +283,7 @@
 						(setf viableFlag -1)
 					)
 					(when (and (equal viableFlag 0) (equal (nth foundSpace position) currentPlayer) )
+						(format t "found ~s cur ~s  row ~s  col ~s ~%" foundSpace currentSpace row col)
 						(setf viableFlag 1)
 					)
 					(when (and (equal viableFlag 0) (equal (nth foundSpace position) '-) )
@@ -290,6 +292,7 @@
 				)
 				
 				(when (equal viableFlag 1)
+					(format t "here6 ~%")
 					(setf moves (nconc moves (list (- currentSpace 7) ) ) )
 				)
 			
