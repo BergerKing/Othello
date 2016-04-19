@@ -117,7 +117,13 @@
  |
  |#
 (defun move-generator (position player)
-(let ( moves currentPlayer next currentSpace foundSpace viableFlag row col)
+(let ( moves currentPlayer next currentSpace foundSpace viableFlag row col
+		;(top '(0 1 2 3 4 5 6 7) )
+		(right '(7 15 23 31 39 47 55 63) )
+		;(bottom '(56 57 58 59 60 61 62 63) )
+		(left '(0 8 16 24 32 40 48 56) )
+		
+	)
 	(setf moves ())
 	
 	; retrive the current and next player to move
@@ -255,6 +261,10 @@
 				(do ((foundSpace currentSpace (+ foundSpace 9) ) (row (floor currentSpace 8) (incf row) ) (col (mod currentSpace 8) (incf col) ) ) 
 						( (or (= viableFlag 1) (= viableFlag -1) ) viableFlag)
 						
+					(when (member currentSpace left) 
+						(return)
+					)
+						
 					(when (or (> row 7) (> col 7) )
 						(setf viableFlag -1)
 					)
@@ -277,13 +287,16 @@
 				; backtrace done by adding 7
 				(do ((foundSpace currentSpace (+ foundSpace 7) ) (row (floor currentSpace 8) (incf row) ) (col (mod currentSpace 8) (1- col) ) ) 
 						( (or (= viableFlag 1) (= viableFlag -1) ) viableFlag)
+						
+					(when (member currentSpace right) 
+						(return)
+					)
 					
 					; make sure to check the row and column for off board in all diaganol backtraces 					
 					(when (or (> row 7) (< col 0) )
 						(setf viableFlag -1)
 					)
 					(when (and (equal viableFlag 0) (equal (nth foundSpace position) currentPlayer) )
-						(format t "found ~s cur ~s  row ~s  col ~s ~%" foundSpace currentSpace row col)
 						(setf viableFlag 1)
 					)
 					(when (and (equal viableFlag 0) (equal (nth foundSpace position) '-) )
@@ -292,7 +305,6 @@
 				)
 				
 				(when (equal viableFlag 1)
-					(format t "here6 ~%")
 					(setf moves (nconc moves (list (- currentSpace 7) ) ) )
 				)
 			
@@ -304,6 +316,10 @@
 				(do ((foundSpace currentSpace (- foundSpace 7) ) (row (floor currentSpace 8) (1- row) ) (col (mod currentSpace 8) (incf col) ) ) 
 						( (or (= viableFlag 1) (= viableFlag -1) ) viableFlag)
 						
+					(when (member currentSpace left) 
+						(return)
+					)
+					
 					(when (or (< row 0) (> col 7) )
 						(setf viableFlag -1)
 					)
@@ -325,6 +341,10 @@
 				(setf viableFlag 0)
 				(do ((foundSpace currentSpace (- foundSpace 9) ) (row (floor currentSpace 8) (1- row) ) (col (mod currentSpace 8) (1- col) ) ) 
 						( (or (= viableFlag 1) (= viableFlag -1) ) viableFlag)
+						
+					(when (member currentSpace right) 
+						(return)
+					)
 						
 					(when (or (< row 0) (< col 0) )
 						(setf viableFlag -1)
