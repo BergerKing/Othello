@@ -9,6 +9,9 @@
  |
  |#
  (defun othello-init () 
+	(setf *WCanMove* 0) ; can white make a move
+	(setf *BCanMove* 0) ; can black move flag
+	(setf *MovesMade* 4) ; counter for the amount of tiles on the board 
  
  )
 

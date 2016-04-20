@@ -118,9 +118,9 @@
  |#
 (defun move-generator (position player)
 (let ( moves currentPlayer next currentSpace foundSpace viableFlag row col
-		;(top '(0 1 2 3 4 5 6 7) )
+		(top '(0 1 2 3 4 5 6 7) )
 		(right '(7 15 23 31 39 47 55 63) )
-		;(bottom '(56 57 58 59 60 61 62 63) )
+		(bottom '(56 57 58 59 60 61 62 63) )
 		(left '(0 8 16 24 32 40 48 56) )
 		
 	)
@@ -162,6 +162,10 @@
 				; backtrace right by adding one
 				(do ((foundSpace currentSpace (incf foundSpace) ) (row (floor currentSpace 8) (incf row) ) (col (mod currentSpace 8) (incf col) ) )
 						( (or (= viableFlag 1) (= viableFlag -1) ) viableFlag)
+						
+					(when (member currentSpace left) 
+						(return)
+					)
 					
 					;check if off board
 					(when (> col 7)
@@ -190,6 +194,10 @@
 				(do ((foundSpace currentSpace (1- foundSpace) ) (row (floor currentSpace 8) (1- row) ) (col (mod currentSpace 8) (1- col) ) )
 						( (or (= viableFlag 1) (= viableFlag -1) ) viableFlag)
 						
+					(when (member currentSpace right) 
+						(return)
+					)
+						
 					(when (< col 0)
 						(setf viableFlag -1)
 					)
@@ -212,6 +220,10 @@
 				; move down by adding 8
 				(do ((foundSpace currentSpace (+ foundSpace 8) ) (row (floor currentSpace 8) (incf row) ) (col (mod currentSpace 8) (incf col) ) ) 
 						( (or (= viableFlag 1) (= viableFlag -1) ) viableFlag)
+						
+					(when (member currentSpace top) 
+						(return)
+					)
 						
 					(when (> row 7)
 						(setf viableFlag -1)
@@ -236,6 +248,10 @@
 				; move up by subtracting 8
 				(do ((foundSpace currentSpace (- foundSpace 8) ) (row (floor currentSpace 8) (1- row) ) (col (mod currentSpace 8) (1- col) ) ) 
 						( (or (= viableFlag 1) (= viableFlag -1) ) viableFlag)
+						
+					(when (member currentSpace bottom) 
+						(return)
+					)
 						
 					(when (< row 0)
 						(setf viableFlag -1)

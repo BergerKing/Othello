@@ -1,15 +1,34 @@
 (load 'moves.lsp)
-; Node structure: stores state, parent, moveLocation and depth.
+; Node structure: stores state, parent, moveLocation and hueristic value.
 (defstruct node state parent moveLocation minMaxVal)
 
 (defparameter *WCanMove* 0) ; can white make a move
 (defparameter *BCanMove* 0) ; can black move flag
 (defparameter *MovesMade* 4) ; counter for the amount of tiles on the board 
+(defparameter *ComMove* 0) ; the last move the computer made
 
+#|
+ | Function: checkPlayer
+ |
+ | Description:
+ | This function checks to make sure the player color was entered in the correct
+ | way.
+ | 
+ |
+ | Parameters:
+ | player - the string the user entered as the player
+ |
+ |#
 (defun othello ( &optional ( player nil ) )
 (let (firstplayer state vaildMoves)
-	( load 'utilities.lsp)
-
+	(load 'utilities.lsp)
+	(load 'readStart.lsp)
+	(load 'hueristics.lsp)
+	(load 'alphabeta.lsp)
+	(load 'moves.lsp)
+	(load 'placement.lsp)
+	
+	(othello-init)
 	(cond
 		; just typed (othello)
 		((equal player nil)
@@ -65,22 +84,35 @@
 	)
 	
 	(setf state (startState) ) ; get start state
-	; game loop
-	(loop while (and (< *MovesMade* 64) (or (equal *WCanMove* 0) (equal *BCanMove* 0) ) )  do
+	(when (equal firstplayer "y")
+		(loop while (and (< *MovesMade* 64) (or (equal *WCanMove* 0) (equal *BCanMove* 0) ) )  do
 	
 		(printState state) ; print after each move
 		(setf validMoves (move-generator state player) )
-		(setf state (make-move state player 2))
-		;(setf state (humanMove validMoves player state) )
+		;(setf state (make-move state player 2))
+		(setf state (humanMove validMoves player state) )
 		(setf player (switchPlayer player))
 		(printState state)
 		(when (< *MovesMade* 64)
 			(setf state (make-move state player 2))
-			(format t "~% second ~s ~%" state)
 			(setf player (switchPlayer player))
 		)
-		
-		
+		)
+	)
+	; game loop
+	(when (equal firstplayer "n")
+		(loop while (and (< *MovesMade* 64) (or (equal *WCanMove* 0) (equal *BCanMove* 0) ) )  do
+	
+			(printState state) ; print after each move
+			(setf state (make-move state player 2))
+			(setf player (switchPlayer player))
+			(printState state)
+			(when (< *MovesMade* 64)
+				(setf validMoves (move-generator state player) )
+				(setf state (humanMove validMoves player state) )
+				(setf player (switchPlayer player))
+			)
+		)
 	)
 	(format t "~%GAME OVER ~%")
 	(printState state)

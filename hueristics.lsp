@@ -1,4 +1,3 @@
-(load 'utilities.lsp)
 #|
  | Function: hueristics
  |

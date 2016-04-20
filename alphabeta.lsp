@@ -1,23 +1,22 @@
-(load 'utilities.lsp)
-(load 'readStart.lsp)
-(load 'hueristics.lsp)
-
 #|
                   ***** MINIMAX.LSP *****
 
 Generalized recursive minimax routine.
 
-Author: Dr. John M. Weiss
+Author: Marcus Berger, Ben Kiaser based on code provided by Dr. John M. Weiss
 Class:	SDSM&T CSC447/547 Artificial Intelligence
 Date: 	Spring 2016
 
-Usage:    (minimax position depth)
+Usage:    minimax (position depth alpha beta player maxFlag)
           where position is the position to be evaluated,
-          and depth is the search depth (number of plys).
+          depth is the search depth (number of plys),
+		  alpha and beta are the values for prunning,
+		  player is the player whose move is being evaluated,
+		  maxFlag flags tell if were maximzing or min.
 
 Returns:  (value path)
           where value is the backed-up value from evaluation of leaf nodes,
-          and path is the path to the desired leaf node.
+          path is the best state found.
 
 Functions called:
 
@@ -28,10 +27,8 @@ Functions called:
           (move-generator position) -
               generates successors to the position.
 
-          (static position) -
+          (hueristics position player) -
               applies the static evaluation function to the position.
-
-          Note: these functions may need additional arguments.
 |#
 
 (defun minimax (position depth alpha beta player maxFlag)
@@ -80,10 +77,7 @@ Functions called:
 				(setf position (copy-list start) )
 			)
 			(when (equal *MovesMade* 63)
-			
-				(format t "last ~s " (node-state (first successors) ))
 				(return-from minimax (list 0 (node-state (first successors) ) ) )
-			
 			)
 			
 			(when (equal maxFlag t)
@@ -111,10 +105,13 @@ Functions called:
 							(return) ;my question being what do we return from this?
 						)
 						(when (> alpha best-score)
-							;(setf best-path (append best-path (list (node-state successor) ) ) ) ;consing does things - bad things
-							;(format t "broken: ~%")
-							(when (not (null succ-state) ) (setf best-path (node-parent succ-state) ) ) ;this band-aid makes me uncomfortable
-							;(format t "broken? ~%")
+
+							(when (not (null succ-state) ) 
+								(setf best-path (node-parent succ-state) ) 
+								(setf *ComMove* (node-moveLocation succ-state) )
+							
+							) ;this band-aid makes me uncomfortable
+							
 						
 							(setf best-score alpha)
 						)
@@ -133,22 +130,16 @@ Functions called:
 							(setf next 'W)
 						)						
 						; perform recursive DFS exploration of game tree
-						;(setf succ-value (first (minimax (node-state successor) (1- depth) alpha beta next t) ) )
 						(setf succ-value (minimax (node-state successor) (1- depth) alpha beta next t) )
 						(setf succ-state (second succ-value ) )
 						(setf succ-value (first succ-value ) )
-						(when (setf beta (min succ-value beta) )
+						(setf beta (min succ-value beta) )
 						
-							;(format t "beta changed ~s ~s~%" beta successor)
-						)
 						(when (<= beta alpha)
-							;(format t "min pruned~%")
 							(setf best-score beta)
-							;(setf best-path position)
-							(return) ;my question being what do we return from this?
+							(return)
 						)
 						(when (< beta best-score)
-							;(setf best-path (append best-path (list (node-state successor) ) ) ) ;consing does things - bad things
 							(setf best-path successor )
 							
 							(setf best-score beta)
@@ -157,7 +148,6 @@ Functions called:
 				
 			)
             ; return (value path) list when done
-			;(format t "RETURNING")
             (list best-score best-path) 
         )
     )

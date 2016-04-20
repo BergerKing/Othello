@@ -1,5 +1,4 @@
-(load 'alphabeta.lsp)
-(load 'placement.lsp)
+
 ;this needs to be fleshed out
 (defun make-move (position player ply)
 	(let (x validMoves move)
@@ -19,16 +18,16 @@
 		(setf move (checkCorners validMoves) )
 		(when (not (equal move nil) )
 			(flipTiles position player move)
+			(setf move (reverseConvert move) )
 			(incf *MovesMade*)
-			(format t "here")
+			(format t "Here is my move: ~s ~%" move)
 			(return-from make-move position)
 		
 		)
 
-		(format t "pos: ~s ~%" position)
 		(setf x (minimax position ply -10000000000 1000000000 player t))
 		(incf *MovesMade*)
-		(format t "~s ~s ~s~%" validMoves *MovesMade* (cadr x))
+		(format t "Here is my move: ~s ~%" (reverseConvert *comMove*) )
 		(cadr x)
 	)
 )
@@ -48,6 +47,15 @@
 					(return-from humanmove state)
 				)
 				(t 
+					(format t "Valid Moves: ")
+					
+					(dolist (index validMoves)
+					
+						(format t "~s " (reverseConvert index))
+					)
+					
+					(format t "~%")
+					
 					(format t "Enter a move: ")
 					(setf coords nil) 
 					(dotimes (x 2)
@@ -55,7 +63,7 @@
 					)
 					(format t "coor ~s" coords)
 					(when (or (< (first coords) 0) (< (second coords) 0) )
-					(setf coords '(-1 -1) )
+						(setf coords '(-1 -1) )
 					)
 				)
 			)
