@@ -2,7 +2,7 @@
 (load 'placement.lsp)
 ;this needs to be fleshed out
 (defun make-move (position player ply)
-	(let (x validMoves)
+	(let (x validMoves move)
 		(setf validMoves (move-generator position player) )
 		(when (equal validMoves nil)
 			(format t "Computer has no moves currently")
@@ -15,6 +15,16 @@
 			(return-from make-move position)
 			
 		)
+		
+		(setf move (checkCorners validMoves) )
+		(when (not (equal move nil) )
+			(flipTiles position player move)
+			(incf *MovesMade*)
+			(format t "here")
+			(return-from make-move position)
+		
+		)
+
 		(format t "pos: ~s ~%" position)
 		(setf x (minimax position ply -10000000000 1000000000 player t))
 		(incf *MovesMade*)
@@ -55,6 +65,32 @@
 		(flipTiles state player coords)
 		(incf *MovesMade*)
 		state
+	)
+)
+
+(defun checkCorners (moves)
+	(let ( (flag nil) )
+	
+		(dolist (index moves)
+			(cond
+				( (equal index 0)
+					(setf flag 0)
+				)
+				
+				( (equal index 7)
+					(setf flag 7)
+				)
+				
+				( (equal index 56)
+					(setf flag 56)
+				)
+				
+				( (equal index 63)
+					(setf flag 63)
+				)
+			)
+		)
+		flag
 	)
 )
 

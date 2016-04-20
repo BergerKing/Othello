@@ -15,6 +15,7 @@
  |#
 (defun hueristics (state maxPlayer)
 	(let (coin maxCoins coinWeight mobile corn near final)
+		
 		; get coin hueristic values in a two value list
 		(setf coin (coinParity state maxPlayer) )
 		; get maxs number of coins
@@ -106,15 +107,7 @@
 		; generate a list of possible moves for each player
 		(setf maxMoves (move-generator state maxPlayer) )
 		
-		(when (equal (checkCorners maxMoves) t)
-			(return-from mobility 10000000)
-		)
-		
 		(setf minMoves (move-generator state minPlayer) )
-		
-		(when (equal (checkCorners minMoves) t)
-			(return-from mobility -10000000)
-		)
 		
 		; and decide return statement based on which set of possible moves is longer
 		(when (> (length maxMoves) (length minMoves) )
@@ -129,31 +122,6 @@
 	)
 )
 
-
-(defun checkCorners (moves)
-	(let ( (flag nil) )
-	
-		(dolist (index moves)
-			(cond
-				( (equal index 0)
-					(setf flag t)
-				)
-				
-				( (equal index 7)
-					(setf flag t)
-				)
-				
-				( (equal index 56)
-					(setf flag t)
-				)
-				
-				( (equal index 63)
-					(setf flag t)
-				)
-			)
-		)
-	)
-)
 
 #|
  | Function: corners
