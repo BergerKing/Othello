@@ -8,15 +8,15 @@
 (defparameter *ComMove* 0) ; the last move the computer made
 
 #|
- | Function: checkPlayer
+ | Function: othello
  |
- | Description:
- | This function checks to make sure the player color was entered in the correct
- | way.
+ | Description: This function is the main function for this program.  The program has different
+	options for playing including choosing who you want to play or if you gave no preference, asking
+	if you want to go first or second.  If you choose first, you get black.  If second, you get white. 
  | 
  |
  | Parameters:
- | player - the string the user entered as the player
+ | player - Which player the person executing the program wants to play as
  |
  |#
 (defun othello ( &optional ( player nil ) )

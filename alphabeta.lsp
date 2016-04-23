@@ -36,7 +36,6 @@ Functions called:
     ; if we have searched deep enough, or there are no successors,
     ; return position evaluation and nil for the path
     (if (or (deepenough depth) (null (move-generator position player)))
-	;identified that this returns (nil nil)
         (list (hueristics position player) nil)
 
         ; otherwise, generate successors and run minimax recursively
@@ -102,7 +101,7 @@ Functions called:
 						(when (<= beta alpha)
 							;(format t "max pruned~%")
 							(setf best-score alpha)
-							(return) ;my question being what do we return from this?
+							(return)
 						)
 						(when (> alpha best-score)
 
@@ -110,7 +109,7 @@ Functions called:
 								(setf best-path (node-parent succ-state) ) 
 								(setf *ComMove* (node-moveLocation succ-state) )
 							
-							) ;this band-aid makes me uncomfortable
+							)
 							
 						
 							(setf best-score alpha)

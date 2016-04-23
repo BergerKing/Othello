@@ -665,6 +665,20 @@
 	)
 )
 
+#|
+ | Function: switchplayer
+ |
+ | Author: Benjamin Kaiser
+ |
+ | Description:
+ | This function takes a given player and then decides which the new current
+ | player should be set to.  This allows for ease of switching players
+ |
+ | Parameters:
+ | 	current:  the value of the current player (W or B)
+ | Returns: the value of the next player (B or W)
+ |
+ |#
 (defun switchplayer (current)
 	(let (newPlayer)
 		(when (equal current 'W)

@@ -1,5 +1,16 @@
-
-;this needs to be fleshed out
+#|
+	Name: make-move
+	Description: This is the function that performs the computer moves.
+		It checks to see if the move currently has any moves and if it does,
+		it then proceeds to evaluate each one of those moves.  It then picks
+		one using minimax (with alpha-beta pruning), executes it, and tells
+		the human which one it picked.  
+	Parameters:
+		position: the current state of the board
+		player: the current player (computer-player)
+		ply: how deep we want to search on this move
+	Returns: the row-col representation of the chosen move.
+|#
 (defun make-move (position player ply)
 	(let (x validMoves move)
 		(setf validMoves (move-generator position player) )
@@ -32,8 +43,24 @@
 	)
 )
 
+#|
+	Name: humanmove
+	Author: Benjamin Kaiser
+	Description: This function is the function that handles human input.  
+		It first checks to see if the player has any moves.  If it doesn't
+		then it informs the user.  If it does, then it displayers a list
+		of the valid moves.  It then prompts for the user to input a coordinate point.
+		It does data validation to make sure the input are numbers so that the program
+		does not crash.  
+	Parameters:
+		validMoves: a list of the valid moves for the given player given this state.
+		player:  This is the player that the humman is currently playing as.
+		state:  The current board state.  
+	Returns:
+		A modified board state after the player has moved.
+|#
 (defun humanmove(validMoves player state)
-	(let ((tempcoord -1) (coords '(-1 -1)))
+	(let (empty coord(tempcoord -1) (coords '(-1 -1)))
 		(do () ( (not (equal (validatePlayerChoice coords validMoves) nil) ) )
 			(cond 
 				((equal validMoves nil) 
@@ -61,11 +88,11 @@
 					(dotimes (x 2)
 						(setf tempcoord (read))
 						(cond
-							((not (numberp tempcoord)) (setf x -1) (setf coords nil) (format t "Not a number! ~% Try again: ~%") )
+							((not (numberp tempcoord)) (setf x -1) (setf coords nil) (format t "Not a number! ~%") )
 							(t (setf coords (append coords (list tempcoord) ) ) )
 						)
 					)
-					(format t "coor ~s" coords)
+					(format t "coor ~s~%" coords)
 					(when (or (< (first coords) 0) (< (second coords) 0) )
 						(setf coords '(-1 -1) )
 					)
@@ -79,7 +106,13 @@
 		state
 	)
 )
-
+#|
+	Function: checkCorners
+	Description: This function is used to see if a corner has been taken or
+		could soon be taken.  It then figures into the heuristic to decide
+		if it should take the corner if possible or if it can't to keep the
+		opponent from taking the corner.  
+|#
 (defun checkCorners (moves)
 	(let ( (flag nil) )
 	
