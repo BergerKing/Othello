@@ -33,7 +33,7 @@
 )
 
 (defun humanmove(validMoves player state)
-	(let ((coords '(-1 -1)))
+	(let ((tempcoord -1) (coords '(-1 -1)))
 		(do () ( (not (equal (validatePlayerChoice coords validMoves) nil) ) )
 			(cond 
 				((equal validMoves nil) 
@@ -59,7 +59,11 @@
 					(format t "Enter a move: ")
 					(setf coords nil) 
 					(dotimes (x 2)
-						(setf coords (append coords (list (read))))
+						(setf tempcoord (read))
+						(cond
+							((not (numberp tempcoord)) (setf x -1) (setf coords nil) (format t "Not a number! ~% Try again: ~%") )
+							(t (setf coords (append coords (list tempcoord) ) ) )
+						)
 					)
 					(format t "coor ~s" coords)
 					(when (or (< (first coords) 0) (< (second coords) 0) )
