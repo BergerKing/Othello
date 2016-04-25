@@ -1,4 +1,3 @@
-(load 'moves.lsp)
 ; Node structure: stores state, parent, moveLocation and hueristic value.
 (defstruct node state parent moveLocation minMaxVal)
 
@@ -94,7 +93,7 @@
 		(setf player (switchPlayer player))
 		(printState state)
 		(when (< *MovesMade* 64)
-			(setf state (make-move state player 2))
+			(setf state (make-move state player 4))
 			(setf player (switchPlayer player))
 		)
 		)
@@ -104,7 +103,7 @@
 		(loop while (and (< *MovesMade* 64) (or (equal *WCanMove* 0) (equal *BCanMove* 0) ) )  do
 	
 			(printState state) ; print after each move
-			(setf state (make-move state player 2))
+			(setf state (make-move state player 4))
 			(setf player (switchPlayer player))
 			(printState state)
 			(when (< *MovesMade* 64)
