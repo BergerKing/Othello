@@ -12,6 +12,75 @@
 	Returns: the row-col representation of the chosen move.
 |#
 (defun make-move (position player ply)
+	(let (x validMoves move org)
+		(setf org (copy-list position) )
+		(setf validMoves (move-generator position player) )
+		(when (equal validMoves nil)
+			(format t "Computer has no moves currently")
+			(when (equal player 'W)
+				(setf *WCanMove* 1)	
+			)
+			(when (equal player 'B)
+				(setf *BCanMove* 1)
+			)
+			(return-from make-move nil)
+			
+		)
+		
+		(setf move (checkCorners validMoves) )
+		(when (not (equal move nil) )
+			(flipTiles position player move)
+			(setf move (reverseConvert move) )
+			(incf *MovesMade*)
+			;(format t "Here is my move: ~s  ~%" move)
+			(return-from make-move move)
+		
+		)
+
+		(setf x (minimax position ply -10000000000 1000000000 player t))
+		(incf *MovesMade*)
+		;(cadr x)
+		;(printState (cadr x) )
+		(setf move (checkForMove validMoves player (cadr x) ) )
+		(format t "Here is my move: ~s ~%" move )
+		move
+	)
+)
+
+#|
+	Name: checkForMove
+	Description: finds the move that was made on a new board state 
+	Parameters:
+		moves: the vaild moves
+		player: the current player (computer-player)
+		new: created board state
+	Returns: the move made in row col format.
+|#
+(defun checkForMove (moves player new)
+	(dolist (index moves)
+		(when (equal (nth index new) player)
+			(return-from checkForMove (reverseConvert index) )
+		
+		)
+	
+	)
+
+)
+
+#|
+	Name: make-move
+	Description: This is the function that performs the computer moves.
+		It checks to see if the move currently has any moves and if it does,
+		it then proceeds to evaluate each one of those moves.  It then picks
+		one using minimax (with alpha-beta pruning), executes it, and tells
+		the human which one it picked.  
+	Parameters:
+		position: the current state of the board
+		player: the current player (computer-player)
+		ply: how deep we want to search on this move
+	Returns: the state representation of the chosen move.
+|#
+(defun make-moveState (position player ply)
 	(let (x validMoves move)
 		(setf validMoves (move-generator position player) )
 		(when (equal validMoves nil)
@@ -22,7 +91,7 @@
 			(when (equal player 'B)
 				(setf *BCanMove* 1)
 			)
-			(return-from make-move position)
+			(return-from make-moveState position)
 			
 		)
 		
@@ -32,13 +101,13 @@
 			;(setf move (reverseConvert move) )
 			(incf *MovesMade*)
 			(format t "Here is my move: ~%")
-			(return-from make-move position)
+			(return-from make-moveState position)
 		
 		)
 
 		(setf x (minimax position ply -10000000000 1000000000 player t))
 		(incf *MovesMade*)
-		(format t "Here is my move: ~%" )
+		(format t "Here is my move:  ~%" )
 		(cadr x)
 	)
 )
